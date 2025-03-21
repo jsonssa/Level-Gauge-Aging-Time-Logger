@@ -1,7 +1,8 @@
 # webForSerialPort
 
 1.安装所有依赖
-npm install serialport nodejs-websocket express cors
+npm install
 
-2.参考博客：
-https://blog.csdn.net/u012612399/article/details/80421730
+2.分别启动两个文件
+node start.js
+node websocket.js
