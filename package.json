@@ -1,0 +1,24 @@
+{
+	"name": "MongodbDatabaseTest",
+	"version": "1.0.0",
+	"description": "Jiangsu Baichuang Instrument Group-mongodb database data writing",
+	"main": "BCST_main.js",
+	"scripts": {
+		"start": "node BCST_main.js"
+	},
+	"keywords": [
+		"Mongodb"
+	],
+	"author": "Cuihuaqiang/Mobile:13915180899/QQ:158358364",
+	"license": "ISC",
+	"dependencies": {
+		"cors": "^2.8.5",
+		"express": "^4.18.1",
+		"moment": "^2.29.4",
+		"mongodb": "^4.14.0",
+		"mongoose": "^6.9.2",
+		"nodejs-websocket": "^1.7.2",
+		"serialport": "^10.4.0",
+		"vue": "^3.2.47"
+	}
+}

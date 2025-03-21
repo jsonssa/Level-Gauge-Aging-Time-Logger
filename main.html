@@ -1,0 +1,2308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <style>
+        .table tbody tr td{
+                vertical-align: middle;
+                text-align: center;
+                margin: 0 ;
+                padding: 0
+            }
+        .table thead tr td{
+                text-align: center;
+        }    
+        .btn {
+            width: 100%;
+            }
+    </style>
+</head>
+<body>
+<div class="container-full" id="app">
+    <div class="row">
+        <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img src="img/logo.jpg" alt="logo" class="img-rounded">
+                        </div>
+                        <div class="col-md-5 col-md-push-6"><h2>{{projectName}}</h2></div>
+                        
+                        
+                        <div class="col-md-2 col-md-push-4">
+                            <p id="content"></p>
+                        </div>        
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2 col-md-push-11">{{websockMessage}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <form class="form-inline">
+                            <div class="form-group" style="width: 200%;">
+                                <input class="btn btn-info form-control" type="button" @click="checkAll" value="全选">
+                                <input class="btn btn-info form-control" type="button" @click="checkNo" value="全不选">
+                                <input class="btn btn-info form-control" type="button" @click="clickDend(selects.map(index => startRelay[index]).join())" value="打开勾选继电器">
+                                <input class="btn btn-warning form-control" type="button" @click="clickDend(selects.map(index => endRelay[index]).join())" value="关闭勾选继电器">
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+        </div>
+    </div>
+    <!-- <P>{{ selects.map(index => startRelay[index]).join()}}</P> -->
+    <div style="margin-top: 10px;" class="row vertical-align-center">
+        <div class="col-md-6">
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <td>继电器序号</td><td>继电器状态</td><td>继电器激活时间</td><td>继电器关闭时间</td><td>开启</td><td>关闭</td><td>老化持续时间</td>
+                    </tr>
+                </thead> 
+                <tbody>
+                    <tr>
+                        <td><input type="checkbox" value="0" v-model="selects">  001</td><td>{{relayStatus[0]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[0]}}</td><td>{{relayEndTimes[0]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[0]=='1'?true:false" @click="clickDend('01050000FF008C3A')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[0]=='0'?true:false" @click="clickDend('010500000000CDCA')" value="关闭"></td><td>{{relayResTimes[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="1" v-model="selects">  002</td><td>{{relayStatus[1]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[1]}}</td><td>{{relayEndTimes[1]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[1]=='1'?true:false" @click="clickDend('01050001FF00DDFA')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[1]=='0'?true:false" @click="clickDend('0105000100009C0A')" value="关闭"></td><td>{{relayResTimes[1]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="2" v-model="selects">  003</td><td>{{relayStatus[2]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[2]}}</td><td>{{relayEndTimes[2]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[2]=='1'?true:false" @click="clickDend('01050002FF002DFA')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[2]=='0'?true:false" @click="clickDend('0105000200006C0A')" value="关闭"></td><td>{{relayResTimes[2]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="3" v-model="selects">  004</td><td>{{relayStatus[3]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[3]}}</td><td>{{relayEndTimes[3]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[3]=='1'?true:false" @click="clickDend('01050003FF007C3A')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[3]=='0'?true:false" @click="clickDend('0105000300003DCA')" value="关闭"></td><td>{{relayResTimes[3]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="4" v-model="selects">  005</td><td>{{relayStatus[4]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[4]}}</td><td>{{relayEndTimes[4]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[4]=='1'?true:false" @click="clickDend('01050004FF00CDFB')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[4]=='0'?true:false" @click="clickDend('0105000400008C0B')" value="关闭"></td><td>{{relayResTimes[4]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="5" v-model="selects">  006</td><td>{{relayStatus[5]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[5]}}</td><td>{{relayEndTimes[5]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[5]=='1'?true:false" @click="clickDend('01050005FF009C3B')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[5]=='0'?true:false" @click="clickDend('010500050000DDCB')" value="关闭"></td><td>{{relayResTimes[5]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="6" v-model="selects">  007</td><td>{{relayStatus[6]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[6]}}</td><td>{{relayEndTimes[6]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[6]=='1'?true:false" @click="clickDend('01050006FF006C3B')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[6]=='0'?true:false" @click="clickDend('0105000600002DCB')" value="关闭"></td><td>{{relayResTimes[6]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="7" v-model="selects">  008</td><td>{{relayStatus[7]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[7]}}</td><td>{{relayEndTimes[7]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[7]=='1'?true:false" @click="clickDend('01050007FF003DFB')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[7]=='0'?true:false" @click="clickDend('0105000700007C0B')" value="关闭"></td><td>{{relayResTimes[7]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="8" v-model="selects">  009</td><td>{{relayStatus[8]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[8]}}</td><td>{{relayEndTimes[8]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[8]=='1'?true:false" @click="clickDend('01050008FF000DF8')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[8]=='0'?true:false" @click="clickDend('0105000800004C08')" value="关闭"></td><td>{{relayResTimes[8]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="9" v-model="selects">  010</td><td>{{relayStatus[9]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[9]}}</td><td>{{relayEndTimes[9]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[9]=='1'?true:false" @click="clickDend('01050009FF005C38')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[9]=='0'?true:false" @click="clickDend('0105000900001DC8')" value="关闭"></td><td>{{relayResTimes[9]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="10" v-model="selects">  011</td><td>{{relayStatus[10]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[10]}}</td><td>{{relayEndTimes[10]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[10]=='1'?true:false" @click="clickDend('0105000AFF00AC38')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[10]=='0'?true:false" @click="clickDend('0105000A0000EDC8')" value="关闭"></td><td>{{relayResTimes[10]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="11" v-model="selects">  012</td><td>{{relayStatus[11]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[11]}}</td><td>{{relayEndTimes[11]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[11]=='1'?true:false" @click="clickDend('0105000BFF00FDF8')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[11]=='0'?true:false" @click="clickDend('0105000B0000BC08')" value="关闭"></td><td>{{relayResTimes[11]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="12" v-model="selects">  013</td><td>{{relayStatus[12]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[12]}}</td><td>{{relayEndTimes[12]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[12]=='1'?true:false" @click="clickDend('0105000CFF004C39')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[12]=='0'?true:false" @click="clickDend('0105000C00000DC9')" value="关闭"></td><td>{{relayResTimes[12]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="13" v-model="selects">  014</td><td>{{relayStatus[13]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[13]}}</td><td>{{relayEndTimes[13]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[13]=='1'?true:false" @click="clickDend('0105000DFF001DF9')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[13]=='0'?true:false" @click="clickDend('0105000D00005C09')" value="关闭"></td><td>{{relayResTimes[13]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="14" v-model="selects">  015</td><td>{{relayStatus[14]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[14]}}</td><td>{{relayEndTimes[14]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[14]=='1'?true:false" @click="clickDend('0105000EFF00EDF9')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[14]=='0'?true:false" @click="clickDend('0105000E0000AC09')" value="关闭"></td><td>{{relayResTimes[14]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="15" v-model="selects">  016</td><td>{{relayStatus[15]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[15]}}</td><td>{{relayEndTimes[15]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[15]=='1'?true:false" @click="clickDend('0105000FFF00BC39')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[15]=='0'?true:false" @click="clickDend('0105000F0000FDC9')" value="关闭"></td><td>{{relayResTimes[15]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="16" v-model="selects">  017</td><td>{{relayStatus[16]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[16]}}</td><td>{{relayEndTimes[16]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[16]=='1'?true:false" @click="clickDend('01050010FF008DFF')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[16]=='0'?true:false" @click="clickDend('010500100000CC0F')" value="关闭"></td><td>{{relayResTimes[16]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="17" v-model="selects">  018</td><td>{{relayStatus[17]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[17]}}</td><td>{{relayEndTimes[17]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[17]=='1'?true:false" @click="clickDend('01050011FF00DC3F')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[17]=='0'?true:false" @click="clickDend('0105001100009DCF')" value="关闭"></td><td>{{relayResTimes[17]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="18" v-model="selects">  019</td><td>{{relayStatus[18]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[18]}}</td><td>{{relayEndTimes[18]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[18]=='1'?true:false" @click="clickDend('01050012FF002C3F')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[18]=='0'?true:false" @click="clickDend('0105001200006DCF')" value="关闭"></td><td>{{relayResTimes[18]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="19" v-model="selects">  020</td><td>{{relayStatus[19]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[19]}}</td><td>{{relayEndTimes[19]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[19]=='1'?true:false" @click="clickDend('01050013FF007DFF')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[19]=='0'?true:false" @click="clickDend('0105001300003C0F')" value="关闭"></td><td>{{relayResTimes[19]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="20" v-model="selects">  021</td><td>{{relayStatus[20]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[20]}}</td><td>{{relayEndTimes[20]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[20]=='1'?true:false" @click="clickDend('01050014FF00CC3E')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[20]=='0'?true:false" @click="clickDend('0105001400008DCE')" value="关闭"></td><td>{{relayResTimes[20]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="21" v-model="selects">  022</td><td>{{relayStatus[21]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[21]}}</td><td>{{relayEndTimes[21]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[21]=='1'?true:false" @click="clickDend('01050015FF009DFE')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[21]=='0'?true:false" @click="clickDend('010500150000DC0E')" value="关闭"></td><td>{{relayResTimes[21]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="22" v-model="selects">  023</td><td>{{relayStatus[22]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[22]}}</td><td>{{relayEndTimes[22]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[22]=='1'?true:false" @click="clickDend('01050016FF006DFE')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[22]=='0'?true:false" @click="clickDend('0105001600002C0E')" value="关闭"></td><td>{{relayResTimes[22]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="23" v-model="selects">  024</td><td>{{relayStatus[23]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[23]}}</td><td>{{relayEndTimes[23]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[23]=='1'?true:false" @click="clickDend('01050017FF003C3E')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[23]=='0'?true:false" @click="clickDend('0105001700007DCE')" value="关闭"></td><td>{{relayResTimes[23]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="24" v-model="selects">  025</td><td>{{relayStatus[24]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[24]}}</td><td>{{relayEndTimes[24]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[24]=='1'?true:false" @click="clickDend('01050018FF000C3D')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[24]=='0'?true:false" @click="clickDend('0105001800004DCD')" value="关闭"></td><td>{{relayResTimes[24]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="25" v-model="selects">  026</td><td>{{relayStatus[25]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[25]}}</td><td>{{relayEndTimes[25]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[25]=='1'?true:false" @click="clickDend('01050019FF005DFD')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[25]=='0'?true:false" @click="clickDend('0105001900001C0D')" value="关闭"></td><td>{{relayResTimes[25]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="26" v-model="selects">  027</td><td>{{relayStatus[26]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[26]}}</td><td>{{relayEndTimes[26]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[26]=='1'?true:false" @click="clickDend('0105001AFF00ADFD')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[26]=='0'?true:false" @click="clickDend('0105001A0000EC0D')" value="关闭"></td><td>{{relayResTimes[26]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="27" v-model="selects">  028</td><td>{{relayStatus[27]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[27]}}</td><td>{{relayEndTimes[27]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[27]=='1'?true:false" @click="clickDend('0105001BFF00FC3D')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[27]=='0'?true:false" @click="clickDend('0105001B0000BDCD')" value="关闭"></td><td>{{relayResTimes[27]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="28" v-model="selects">  029</td><td>{{relayStatus[28]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[28]}}</td><td>{{relayEndTimes[28]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[28]=='1'?true:false" @click="clickDend('0105001CFF004DFC')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[28]=='0'?true:false" @click="clickDend('0105001C00000C0C')" value="关闭"></td><td>{{relayResTimes[28]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="29" v-model="selects">  030</td><td>{{relayStatus[29]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[29]}}</td><td>{{relayEndTimes[29]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[29]=='1'?true:false" @click="clickDend('0105001DFF001C3C')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[29]=='0'?true:false" @click="clickDend('0105001D00005DCC')" value="关闭"></td><td>{{relayResTimes[29]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="30" v-model="selects">  031</td><td>{{relayStatus[30]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[30]}}</td><td>{{relayEndTimes[30]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[30]=='1'?true:false" @click="clickDend('0105001EFF00EC3C')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[30]=='0'?true:false" @click="clickDend('0105001E0000ADCC')" value="关闭"></td><td>{{relayResTimes[30]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="31" v-model="selects">  032</td><td>{{relayStatus[31]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[31]}}</td><td>{{relayEndTimes[31]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[31]=='1'?true:false" @click="clickDend('0105001FFF00BDFC')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[31]=='0'?true:false" @click="clickDend('0105001F0000FC0C')" value="关闭"></td><td>{{relayResTimes[31]}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <td>继电器序号</td><td>继电器状态</td><td>继电器激活时间</td><td>继电器关闭时间</td><td>开启</td><td>关闭</td><td>老化持续时间</td>
+                    </tr>
+                </thead> 
+                <tbody>
+                    <tr>
+                        <td><input type="checkbox" value="32" v-model="selects">  033</td><td>{{relayStatus[32]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[32]}}</td><td>{{relayEndTimes[32]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[32]=='1'?true:false" @click="clickDend('01050020FF008DF0')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[32]=='0'?true:false" @click="clickDend('010500200000CC00')" value="关闭"></td><td>{{relayResTimes[32]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="33" v-model="selects">  034</td><td>{{relayStatus[33]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[33]}}</td><td>{{relayEndTimes[33]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[33]=='1'?true:false" @click="clickDend('01050021FF00DC30')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[33]=='0'?true:false" @click="clickDend('0105002100009DC0')" value="关闭"></td><td>{{relayResTimes[33]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="34" v-model="selects">  035</td><td>{{relayStatus[34]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[34]}}</td><td>{{relayEndTimes[34]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[34]=='1'?true:false" @click="clickDend('01050022FF002C30')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[34]=='0'?true:false" @click="clickDend('0105002200006DC0')" value="关闭"></td><td>{{relayResTimes[34]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="35" v-model="selects">  036</td><td>{{relayStatus[35]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[35]}}</td><td>{{relayEndTimes[35]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[35]=='1'?true:false" @click="clickDend('01050023FF007DF0')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[35]=='0'?true:false" @click="clickDend('0105002300003C00')" value="关闭"></td><td>{{relayResTimes[35]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="36" v-model="selects">  037</td><td>{{relayStatus[36]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[36]}}</td><td>{{relayEndTimes[36]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[36]=='1'?true:false" @click="clickDend('01050024FF00CC31')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[36]=='0'?true:false" @click="clickDend('0105002400008DC1')" value="关闭"></td><td>{{relayResTimes[36]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="37" v-model="selects">  038</td><td>{{relayStatus[37]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[37]}}</td><td>{{relayEndTimes[37]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[37]=='1'?true:false" @click="clickDend('01050025FF009DF1')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[37]=='0'?true:false" @click="clickDend('010500250000DC01')" value="关闭"></td><td>{{relayResTimes[37]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="38" v-model="selects">  039</td><td>{{relayStatus[38]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[38]}}</td><td>{{relayEndTimes[38]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[38]=='1'?true:false" @click="clickDend('01050026FF006DF1')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[38]=='0'?true:false" @click="clickDend('0105002600002C01')" value="关闭"></td><td>{{relayResTimes[38]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="39" v-model="selects">  040</td><td>{{relayStatus[39]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[39]}}</td><td>{{relayEndTimes[39]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[39]=='1'?true:false" @click="clickDend('01050027FF003C31')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[39]=='0'?true:false" @click="clickDend('0105002700007DC1')" value="关闭"></td><td>{{relayResTimes[39]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="40" v-model="selects">  041</td><td>{{relayStatus[40]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[40]}}</td><td>{{relayEndTimes[40]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[40]=='1'?true:false" @click="clickDend('01050028FF000C32')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[40]=='0'?true:false" @click="clickDend('0105002800004DC2')" value="关闭"></td><td>{{relayResTimes[40]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="41" v-model="selects">  042</td><td>{{relayStatus[41]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[41]}}</td><td>{{relayEndTimes[41]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[41]=='1'?true:false" @click="clickDend('01050029FF005DF2')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[41]=='0'?true:false" @click="clickDend('0105002900001C02')" value="关闭"></td><td>{{relayResTimes[41]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="42" v-model="selects">  043</td><td>{{relayStatus[42]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[42]}}</td><td>{{relayEndTimes[42]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[42]=='1'?true:false" @click="clickDend('0105002AFF00ADF2')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[42]=='0'?true:false" @click="clickDend('0105002A0000EC02')" value="关闭"></td><td>{{relayResTimes[42]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="43" v-model="selects">  044</td><td>{{relayStatus[43]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[43]}}</td><td>{{relayEndTimes[43]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[43]=='1'?true:false" @click="clickDend('0105002BFF00FC32')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[43]=='0'?true:false" @click="clickDend('0105002B0000BDC2')" value="关闭"></td><td>{{relayResTimes[43]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="44" v-model="selects">  045</td><td>{{relayStatus[44]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[44]}}</td><td>{{relayEndTimes[44]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[44]=='1'?true:false" @click="clickDend('0105002CFF004DF3')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[44]=='0'?true:false" @click="clickDend('0105002C00000C03')" value="关闭"></td><td>{{relayResTimes[44]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="45" v-model="selects">  046</td><td>{{relayStatus[45]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[45]}}</td><td>{{relayEndTimes[45]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[45]=='1'?true:false" @click="clickDend('0105002DFF001C33')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[45]=='0'?true:false" @click="clickDend('0105002D00005DC3')" value="关闭"></td><td>{{relayResTimes[45]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="46" v-model="selects">  047</td><td>{{relayStatus[46]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[46]}}</td><td>{{relayEndTimes[46]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[46]=='1'?true:false" @click="clickDend('0105002EFF00EC33')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[46]=='0'?true:false" @click="clickDend('0105002E0000ADC3')" value="关闭"></td><td>{{relayResTimes[46]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="47" v-model="selects">  048</td><td>{{relayStatus[47]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[47]}}</td><td>{{relayEndTimes[47]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[47]=='1'?true:false" @click="clickDend('0105002FFF00BDF3')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[47]=='0'?true:false" @click="clickDend('0105002F0000FC03')" value="关闭"></td><td>{{relayResTimes[47]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="48" v-model="selects">  049</td><td>{{relayStatus[48]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[48]}}</td><td>{{relayEndTimes[48]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[48]=='1'?true:false" @click="clickDend('01050030FF008C35')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[48]=='0'?true:false" @click="clickDend('010500300000CDC5')" value="关闭"></td><td>{{relayResTimes[48]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="49" v-model="selects">  050</td><td>{{relayStatus[49]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[49]}}</td><td>{{relayEndTimes[49]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[49]=='1'?true:false" @click="clickDend('01050031FF00DDF5')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[49]=='0'?true:false" @click="clickDend('0105003100009C05')" value="关闭"></td><td>{{relayResTimes[49]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="50" v-model="selects">  051</td><td>{{relayStatus[50]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[50]}}</td><td>{{relayEndTimes[50]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[50]=='1'?true:false" @click="clickDend('01050032FF002DF5')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[50]=='0'?true:false" @click="clickDend('0105003200006C05')" value="关闭"></td><td>{{relayResTimes[50]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="51" v-model="selects">  052</td><td>{{relayStatus[51]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[51]}}</td><td>{{relayEndTimes[51]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[51]=='1'?true:false" @click="clickDend('01050033FF007C35')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[51]=='0'?true:false" @click="clickDend('0105003300003DC5')" value="关闭"></td><td>{{relayResTimes[51]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="52" v-model="selects">  053</td><td>{{relayStatus[52]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[52]}}</td><td>{{relayEndTimes[52]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[52]=='1'?true:false" @click="clickDend('01050034FF00CDF4')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[52]=='0'?true:false" @click="clickDend('0105003400008C04')" value="关闭"></td><td>{{relayResTimes[52]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="53" v-model="selects">  054</td><td>{{relayStatus[53]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[53]}}</td><td>{{relayEndTimes[53]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[53]=='1'?true:false" @click="clickDend('01050035FF009C34')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[53]=='0'?true:false" @click="clickDend('010500350000DDC4')" value="关闭"></td><td>{{relayResTimes[53]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="54" v-model="selects">  055</td><td>{{relayStatus[54]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[54]}}</td><td>{{relayEndTimes[54]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[54]=='1'?true:false" @click="clickDend('01050036FF006C34')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[54]=='0'?true:false" @click="clickDend('0105003600002DC4')" value="关闭"></td><td>{{relayResTimes[54]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="55" v-model="selects">  056</td><td>{{relayStatus[55]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[55]}}</td><td>{{relayEndTimes[55]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[55]=='1'?true:false" @click="clickDend('01050037FF003DF4')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[55]=='0'?true:false" @click="clickDend('0105003700007C04')" value="关闭"></td><td>{{relayResTimes[55]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="56" v-model="selects">  057</td><td>{{relayStatus[56]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[56]}}</td><td>{{relayEndTimes[56]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[56]=='1'?true:false" @click="clickDend('01050038FF000DF7')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[56]=='0'?true:false" @click="clickDend('0105003800004C07')" value="关闭"></td><td>{{relayResTimes[56]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="57" v-model="selects">  058</td><td>{{relayStatus[57]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[57]}}</td><td>{{relayEndTimes[57]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[57]=='1'?true:false" @click="clickDend('01050039FF005C37')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[57]=='0'?true:false" @click="clickDend('0105003900001DC7')" value="关闭"></td><td>{{relayResTimes[57]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="58" v-model="selects">  059</td><td>{{relayStatus[58]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[58]}}</td><td>{{relayEndTimes[58]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[58]=='1'?true:false" @click="clickDend('0105003AFF00AC37')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[58]=='0'?true:false" @click="clickDend('0105003A0000EDC7')" value="关闭"></td><td>{{relayResTimes[58]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="59" v-model="selects">  060</td><td>{{relayStatus[59]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[59]}}</td><td>{{relayEndTimes[59]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[59]=='1'?true:false" @click="clickDend('0105003BFF00FDF7')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[59]=='0'?true:false" @click="clickDend('0105003B0000BC07')" value="关闭"></td><td>{{relayResTimes[59]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="60" v-model="selects">  061</td><td>{{relayStatus[60]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[60]}}</td><td>{{relayEndTimes[60]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[60]=='1'?true:false" @click="clickDend('0105003CFF004C36')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[60]=='0'?true:false" @click="clickDend('0105003C00000DC6')" value="关闭"></td><td>{{relayResTimes[60]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="61" v-model="selects">  062</td><td>{{relayStatus[61]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[61]}}</td><td>{{relayEndTimes[61]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[61]=='1'?true:false" @click="clickDend('0105003DFF001DF6')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[61]=='0'?true:false" @click="clickDend('0105003D00005C06')" value="关闭"></td><td>{{relayResTimes[61]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="62" v-model="selects">  063</td><td>{{relayStatus[62]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[62]}}</td><td>{{relayEndTimes[62]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[62]=='1'?true:false" @click="clickDend('0105003EFF00EDF6')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[62]=='0'?true:false" @click="clickDend('0105003E0000AC06')" value="关闭"></td><td>{{relayResTimes[62]}}</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" value="63" v-model="selects">  064</td><td>{{relayStatus[63]=='1'?'激活':'关闭'}}</td><td>{{relayStartTimes[63]}}</td><td>{{relayEndTimes[63]}}</td><td><input type="button" class="btn btn-success" :disabled="relayStatus[63]=='1'?true:false" @click="clickDend('0105003FFF00BC36')" value="打开"></td><td><input type="button" class="btn btn-danger" :disabled="relayStatus[63]=='0'?true:false" @click="clickDend('0105003F0000FDC6')" value="关闭"></td><td>{{relayResTimes[63]}}</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+<script src="js/jquery.min.js"></script>
+
+<!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
+<script src="js/bootstrap.min.js"></script>
+<!-- 引入vue -->
+<script src="js/vue.global.js"></script>
+<script type="text/JavaScript">
+   const {createApp} = Vue;
+   const app = createApp({
+    data(){
+        return {
+             projectName:'液位计智能老化控制系统',
+             websockMessage:'', 
+             webSocket:null,
+             relayStatus:[],
+             relayStartTimes:[],
+             relayEndTimes:[],
+             relayResTimes:[],
+             selects:[],
+             startRelay:['01050000FF008C3A','01050001FF00DDFA','01050002FF002DFA','01050003FF007C3A','01050004FF00CDFB','01050005FF009C3B','01050006FF006C3B','01050007FF003DFB','01050008FF000DF8','01050009FF005C38','0105000AFF00AC38',
+'0105000BFF00FDF8',
+'0105000CFF004C39',
+'0105000DFF001DF9',
+'0105000EFF00EDF9',
+'0105000FFF00BC39',
+'01050010FF008DFF',
+'01050011FF00DC3F',
+'01050012FF002C3F',
+'01050013FF007DFF',
+'01050014FF00CC3E',
+'01050015FF009DFE',
+'01050016FF006DFE',
+'01050017FF003C3E',
+'01050018FF000C3D',
+'01050019FF005DFD',
+'0105001AFF00ADFD',
+'0105001BFF00FC3D',
+'0105001CFF004DFC',
+'0105001DFF001C3C',
+'0105001EFF00EC3C',
+'0105001FFF00BDFC',
+'01050020FF008DF0',
+'01050021FF00DC30',
+'01050022FF002C30',
+'01050023FF007DF0',
+'01050024FF00CC31',
+'01050025FF009DF1',
+'01050026FF006DF1',
+'01050027FF003C31',
+'01050028FF000C32',
+'01050029FF005DF2',
+'0105002AFF00ADF2',
+'0105002BFF00FC32',
+'0105002CFF004DF3',
+'0105002DFF001C33',
+'0105002EFF00EC33',
+'0105002FFF00BDF3',
+'01050030FF008C35',
+'01050031FF00DDF5',
+'01050032FF002DF5',
+'01050033FF007C35',
+'01050034FF00CDF4',
+'01050035FF009C34',
+'01050036FF006C34',
+'01050037FF003DF4',
+'01050038FF000DF7', 
+'01050039FF005C37',
+'0105003AFF00AC37',
+'0105003BFF00FDF7',
+'0105003CFF004C36',
+'0105003DFF001DF6',
+'0105003EFF00EDF6',
+'0105003FFF00BC36'
+],
+endRelay:['010500000000CDCA',
+'0105000100009C0A',
+'0105000200006C0A',
+'0105000300003DCA',
+'0105000400008C0B',
+'010500050000DDCB',
+'0105000600002DCB',
+'0105000700007C0B',
+'0105000800004C08',
+'0105000900001DC8',
+'0105000A0000EDC8',
+'0105000B0000BC08',
+'0105000C00000DC9',
+'0105000D00005C09',
+'0105000E0000AC09',
+'0105000F0000FDC9',
+'010500100000CC0F',
+'0105001100009DCF',
+'0105001200006DCF',
+'0105001300003C0F',
+'0105001400008DCE',
+'010500150000DC0E',
+'0105001600002C0E',
+'0105001700007DCE',
+'0105001800004DCD',
+'0105001900001C0D',
+'0105001A0000EC0D',
+'0105001B0000BDCD',
+'0105001C00000C0C',
+'0105001D00005DCC',
+'0105001E0000ADCC',
+'0105001F0000FC0C',
+'010500200000CC00',
+'0105002100009DC0',
+'0105002200006DC0',
+'0105002300003C00',
+'0105002400008DC1',
+'010500250000DC01',
+'0105002600002C01',
+'0105002700007DC1',
+'0105002800004DC2',
+'0105002900001C02',
+'0105002A0000EC02',
+'0105002B0000BDC2',
+'0105002C00000C03',
+'0105002D00005DC3',
+'0105002E0000ADC3',
+'0105002F0000FC03',
+'010500300000CDC5',
+'0105003100009C05',
+'0105003200006C05',
+'0105003300003DC5',
+'0105003400008C04',
+'010500350000DDC4',
+'0105003600002DC4',
+'0105003700007C04',
+'0105003800004C07',
+'0105003900001DC7',
+'0105003A0000EDC7',
+'0105003B0000BC07',
+'0105003C00000DC6',
+'0105003D00005C06',
+'0105003E0000AC06',
+'0105003F0000FDC6'
+]  
+        }
+    },
+    methods:{
+        setupWebSocket() {
+            // 链接websock服务器
+                const ws = new WebSocket('ws://localhost:5000');
+            // 服务器打开状态监听s
+                ws.onopen = () => {
+                    this.websockMessage = "电源继电组件已链接";
+                    setTimeout(this.clickDend,1000,'0101000000403DFA');
+                    // 第一组继电器判定
+                    if(localStorage.getItem('start001')){
+                        this.relayStartTimes[0] = localStorage.getItem('start001');
+                    }
+                    if(localStorage.getItem('end001')){
+                        this.relayEndTimes[0] = localStorage.getItem('end001');
+                    }
+                    if(localStorage.getItem('res001')){
+                        this.relayResTimes[0] = localStorage.getItem('res001');
+                    }
+                    // 第二组继电器判定
+                    if(localStorage.getItem('start002')){
+                        this.relayStartTimes[1] = localStorage.getItem('start002');
+                    }
+                    if(localStorage.getItem('end002')){
+                        this.relayEndTimes[1] = localStorage.getItem('end002');
+                    }
+                    if(localStorage.getItem('res002')){
+                        this.relayResTimes[1] = localStorage.getItem('res002');
+                    }
+                    // 第三组继电器判定
+                    if(localStorage.getItem('start003')){
+                        this.relayStartTimes[2] = localStorage.getItem('start003');
+                    }
+                    if(localStorage.getItem('end003')){
+                        this.relayEndTimes[2] = localStorage.getItem('end003');
+                    }
+                    if(localStorage.getItem('res003')){
+                        this.relayResTimes[2] = localStorage.getItem('res003');
+                    }
+                     // 第四组继电器判定
+                     if(localStorage.getItem('start004')){
+                        this.relayStartTimes[3] = localStorage.getItem('start004');
+                    }
+                    if(localStorage.getItem('end004')){
+                        this.relayEndTimes[3] = localStorage.getItem('end004');
+                    }
+                    if(localStorage.getItem('res004')){
+                        this.relayResTimes[3] = localStorage.getItem('res004');
+                    }
+                    // 第五组继电器判定
+                    if(localStorage.getItem('start005')){
+                        this.relayStartTimes[4] = localStorage.getItem('start005');
+                    }
+                    if(localStorage.getItem('end005')){
+                        this.relayEndTimes[4] = localStorage.getItem('end005');
+                    }
+                    if(localStorage.getItem('res005')){
+                        this.relayResTimes[4] = localStorage.getItem('res005');
+                    }
+                    // 第六组继电器判定
+                    if(localStorage.getItem('start006')){
+                        this.relayStartTimes[5] = localStorage.getItem('start006');
+                    }
+                    if(localStorage.getItem('end006')){
+                        this.relayEndTimes[5] = localStorage.getItem('end006');
+                    }
+                    if(localStorage.getItem('res006')){
+                        this.relayResTimes[5] = localStorage.getItem('res006');
+                    }
+                    // 第七组继电器判定
+                    if(localStorage.getItem('start007')){
+                        this.relayStartTimes[6] = localStorage.getItem('start007');
+                    }
+                    if(localStorage.getItem('end007')){
+                        this.relayEndTimes[6] = localStorage.getItem('end007');
+                    }
+                    if(localStorage.getItem('res007')){
+                        this.relayResTimes[6] = localStorage.getItem('res007');
+                    }
+                    // 第八组继电器判定
+                    if(localStorage.getItem('start008')){
+                        this.relayStartTimes[7] = localStorage.getItem('start008');
+                    }
+                    if(localStorage.getItem('end008')){
+                        this.relayEndTimes[7] = localStorage.getItem('end008');
+                    }
+                    if(localStorage.getItem('res008')){
+                        this.relayResTimes[7] = localStorage.getItem('res008');
+                    }
+                    // 第九组继电器判定
+                    if(localStorage.getItem('start009')){
+                        this.relayStartTimes[8] = localStorage.getItem('start009');
+                    }
+                    if(localStorage.getItem('end009')){
+                        this.relayEndTimes[8] = localStorage.getItem('end009');
+                    }
+                    if(localStorage.getItem('res009')){
+                        this.relayResTimes[8] = localStorage.getItem('res009');
+                    }
+                    // 第十组继电器判定
+                    if(localStorage.getItem('start010')){
+                        this.relayStartTimes[9] = localStorage.getItem('start010');
+                    }
+                    if(localStorage.getItem('end010')){
+                        this.relayEndTimes[9] = localStorage.getItem('end010');
+                    }
+                    if(localStorage.getItem('res010')){
+                        this.relayResTimes[9] = localStorage.getItem('res010');
+                    }
+                    // 第11组继电器判定
+                    if(localStorage.getItem('start011')){
+                        this.relayStartTimes[10] = localStorage.getItem('start011');
+                    }
+                    if(localStorage.getItem('end011')){
+                        this.relayEndTimes[10] = localStorage.getItem('end011');
+                    }
+                    if(localStorage.getItem('res011')){
+                        this.relayResTimes[10] = localStorage.getItem('res011');
+                    }
+                    // 第12组继电器判定
+                    if(localStorage.getItem('start012')){
+                        this.relayStartTimes[11] = localStorage.getItem('start012');
+                    }
+                    if(localStorage.getItem('end012')){
+                        this.relayEndTimes[11] = localStorage.getItem('end012');
+                    }
+                    if(localStorage.getItem('res012')){
+                        this.relayResTimes[11] = localStorage.getItem('res012');
+                    }
+                    // 第13组继电器判定
+                    if(localStorage.getItem('start013')){
+                        this.relayStartTimes[12] = localStorage.getItem('start013');
+                    }
+                    if(localStorage.getItem('end013')){
+                        this.relayEndTimes[12] = localStorage.getItem('end013');
+                    }
+                    if(localStorage.getItem('res013')){
+                        this.relayResTimes[12] = localStorage.getItem('res013');
+                    }
+                    // 第14组继电器判定
+                    if(localStorage.getItem('start014')){
+                        this.relayStartTimes[13] = localStorage.getItem('start014');
+                    }
+                    if(localStorage.getItem('end014')){
+                        this.relayEndTimes[13] = localStorage.getItem('end014');
+                    }
+                    if(localStorage.getItem('res014')){
+                        this.relayResTimes[13] = localStorage.getItem('res014');
+                    }
+                    // 第15组继电器判定
+                    if(localStorage.getItem('start015')){
+                        this.relayStartTimes[14] = localStorage.getItem('start015');
+                    }
+                    if(localStorage.getItem('end015')){
+                        this.relayEndTimes[14] = localStorage.getItem('end015');
+                    }
+                    if(localStorage.getItem('res015')){
+                        this.relayResTimes[14] = localStorage.getItem('res015');
+                    }
+                    // 第16组继电器判定
+                    if(localStorage.getItem('start016')){
+                        this.relayStartTimes[15] = localStorage.getItem('start016');
+                    }
+                    if(localStorage.getItem('end016')){
+                        this.relayEndTimes[15] = localStorage.getItem('end016');
+                    }
+                    if(localStorage.getItem('res016')){
+                        this.relayResTimes[15] = localStorage.getItem('res016');
+                    }
+                     // 第17组继电器判定
+                     if(localStorage.getItem('start017')){
+                        this.relayStartTimes[16] = localStorage.getItem('start017');
+                    }
+                    if(localStorage.getItem('end017')){
+                        this.relayEndTimes[16] = localStorage.getItem('end017');
+                    }
+                    if(localStorage.getItem('res017')){
+                        this.relayResTimes[16] = localStorage.getItem('res017');
+                    }
+                    // 第18组继电器判定
+                    if(localStorage.getItem('start018')){
+                        this.relayStartTimes[17] = localStorage.getItem('start018');
+                    }
+                    if(localStorage.getItem('end018')){
+                        this.relayEndTimes[17] = localStorage.getItem('end018');
+                    }
+                    if(localStorage.getItem('res018')){
+                        this.relayResTimes[17] = localStorage.getItem('res018');
+                    }
+                    // 第19组继电器判定
+                    if(localStorage.getItem('start019')){
+                        this.relayStartTimes[18] = localStorage.getItem('start019');
+                    }
+                    if(localStorage.getItem('end019')){
+                        this.relayEndTimes[18] = localStorage.getItem('end019');
+                    }
+                    if(localStorage.getItem('res019')){
+                        this.relayResTimes[18] = localStorage.getItem('res019');
+                    }
+                    // 第20组继电器判定
+                    if(localStorage.getItem('start020')){
+                        this.relayStartTimes[19] = localStorage.getItem('start020');
+                    }
+                    if(localStorage.getItem('end020')){
+                        this.relayEndTimes[19] = localStorage.getItem('end020');
+                    }
+                    if(localStorage.getItem('res020')){
+                        this.relayResTimes[19] = localStorage.getItem('res020');
+                    }
+                    // 第21组继电器判定
+                    if(localStorage.getItem('start021')){
+                        this.relayStartTimes[20] = localStorage.getItem('start021');
+                    }
+                    if(localStorage.getItem('end021')){
+                        this.relayEndTimes[20] = localStorage.getItem('end021');
+                    }
+                    if(localStorage.getItem('res021')){
+                        this.relayResTimes[20] = localStorage.getItem('res021');
+                    }
+                    // 第22组继电器判定
+                    if(localStorage.getItem('start022')){
+                        this.relayStartTimes[21] = localStorage.getItem('start022');
+                    }
+                    if(localStorage.getItem('end022')){
+                        this.relayEndTimes[21] = localStorage.getItem('end022');
+                    }
+                    if(localStorage.getItem('res022')){
+                        this.relayResTimes[21] = localStorage.getItem('res022');
+                    }
+                    // 第23组继电器判定
+                    if(localStorage.getItem('start023')){
+                        this.relayStartTimes[22] = localStorage.getItem('start023');
+                    }
+                    if(localStorage.getItem('end023')){
+                        this.relayEndTimes[22] = localStorage.getItem('end023');
+                    }
+                    if(localStorage.getItem('res023')){
+                        this.relayResTimes[22] = localStorage.getItem('res023');
+                    }
+                    // 第24组继电器判定
+                    if(localStorage.getItem('start024')){
+                        this.relayStartTimes[23] = localStorage.getItem('start024');
+                    }
+                    if(localStorage.getItem('end024')){
+                        this.relayEndTimes[23] = localStorage.getItem('end024');
+                    }
+                    if(localStorage.getItem('res024')){
+                        this.relayResTimes[23] = localStorage.getItem('res024');
+                    }
+                    // 第25组继电器判定
+                    if(localStorage.getItem('start025')){
+                        this.relayStartTimes[24] = localStorage.getItem('start025');
+                    }
+                    if(localStorage.getItem('end025')){
+                        this.relayEndTimes[24] = localStorage.getItem('end025');
+                    }
+                    if(localStorage.getItem('res025')){
+                        this.relayResTimes[24] = localStorage.getItem('res025');
+                    }
+                    // 第26组继电器判定
+                    if(localStorage.getItem('start026')){
+                        this.relayStartTimes[25] = localStorage.getItem('start026');
+                    }
+                    if(localStorage.getItem('end026')){
+                        this.relayEndTimes[25] = localStorage.getItem('end026');
+                    }
+                    if(localStorage.getItem('res026')){
+                        this.relayResTimes[25] = localStorage.getItem('res026');
+                    }
+                    // 第27组继电器判定
+                    if(localStorage.getItem('start027')){
+                        this.relayStartTimes[26] = localStorage.getItem('start027');
+                    }
+                    if(localStorage.getItem('end027')){
+                        this.relayEndTimes[26] = localStorage.getItem('end027');
+                    }
+                    if(localStorage.getItem('res027')){
+                        this.relayResTimes[26] = localStorage.getItem('res027');
+                    }
+                    // 第28组继电器判定
+                    if(localStorage.getItem('start028')){
+                        this.relayStartTimes[27] = localStorage.getItem('start028');
+                    }
+                    if(localStorage.getItem('end028')){
+                        this.relayEndTimes[27] = localStorage.getItem('end028');
+                    }
+                    if(localStorage.getItem('res028')){
+                        this.relayResTimes[27] = localStorage.getItem('res028');
+                    }
+                    // 第29组继电器判定
+                    if(localStorage.getItem('start029')){
+                        this.relayStartTimes[28] = localStorage.getItem('start029');
+                    }
+                    if(localStorage.getItem('end029')){
+                        this.relayEndTimes[28] = localStorage.getItem('end029');
+                    }
+                    if(localStorage.getItem('res029')){
+                        this.relayResTimes[28] = localStorage.getItem('res029');
+                    }
+                    // 第30组继电器判定
+                    if(localStorage.getItem('start030')){
+                        this.relayStartTimes[29] = localStorage.getItem('start030');
+                    }
+                    if(localStorage.getItem('end030')){
+                        this.relayEndTimes[29] = localStorage.getItem('end030');
+                    }
+                    if(localStorage.getItem('res030')){
+                        this.relayResTimes[29] = localStorage.getItem('res030');
+                    }
+                    // 第31组继电器判定
+                    if(localStorage.getItem('start031')){
+                        this.relayStartTimes[30] = localStorage.getItem('start031');
+                    }
+                    if(localStorage.getItem('end031')){
+                        this.relayEndTimes[30] = localStorage.getItem('end031');
+                    }
+                    if(localStorage.getItem('res031')){
+                        this.relayResTimes[30] = localStorage.getItem('res031');
+                    }
+                    // 第32组继电器判定
+                    if(localStorage.getItem('start032')){
+                        this.relayStartTimes[31] = localStorage.getItem('start032');
+                    }
+                    if(localStorage.getItem('end032')){
+                        this.relayEndTimes[31] = localStorage.getItem('end032');
+                    }
+                    if(localStorage.getItem('res032')){
+                        this.relayResTimes[31] = localStorage.getItem('res032');
+                    }
+                    // 第33组继电器判定
+                    if(localStorage.getItem('start033')){
+                        this.relayStartTimes[32] = localStorage.getItem('start033');
+                    }
+                    if(localStorage.getItem('end033')){
+                        this.relayEndTimes[32] = localStorage.getItem('end033');
+                    }
+                    if(localStorage.getItem('res033')){
+                        this.relayResTimes[32] = localStorage.getItem('res033');
+                    }
+                    // 第34组继电器判定
+                    if(localStorage.getItem('start034')){
+                        this.relayStartTimes[33] = localStorage.getItem('start034');
+                    }
+                    if(localStorage.getItem('end034')){
+                        this.relayEndTimes[33] = localStorage.getItem('end034');
+                    }
+                    if(localStorage.getItem('res034')){
+                        this.relayResTimes[33] = localStorage.getItem('res034');
+                    }
+                    // 第35组继电器判定
+                    if(localStorage.getItem('start035')){
+                        this.relayStartTimes[34] = localStorage.getItem('start035');
+                    }
+                    if(localStorage.getItem('end035')){
+                        this.relayEndTimes[34] = localStorage.getItem('end035');
+                    }
+                    if(localStorage.getItem('res035')){
+                        this.relayResTimes[34] = localStorage.getItem('res035');
+                    }
+                    // 第36组继电器判定
+                    if(localStorage.getItem('start036')){
+                        this.relayStartTimes[35] = localStorage.getItem('start036');
+                    }
+                    if(localStorage.getItem('end036')){
+                        this.relayEndTimes[35] = localStorage.getItem('end036');
+                    }
+                    if(localStorage.getItem('res036')){
+                        this.relayResTimes[35] = localStorage.getItem('res036');
+                    }
+                    // 第37组继电器判定
+                     if(localStorage.getItem('start037')){
+                        this.relayStartTimes[36] = localStorage.getItem('start037');
+                    }
+                    if(localStorage.getItem('end037')){
+                        this.relayEndTimes[36] = localStorage.getItem('end037');
+                    }
+                    if(localStorage.getItem('res037')){
+                        this.relayResTimes[36] = localStorage.getItem('res037');
+                    }
+                    // 第38组继电器判定
+                    if(localStorage.getItem('start038')){
+                        this.relayStartTimes[37] = localStorage.getItem('start038');
+                    }
+                    if(localStorage.getItem('end038')){
+                        this.relayEndTimes[37] = localStorage.getItem('end038');
+                    }
+                    if(localStorage.getItem('res038')){
+                        this.relayResTimes[37] = localStorage.getItem('res038');
+                    }
+                     // 第39组继电器判定
+                     if(localStorage.getItem('start039')){
+                        this.relayStartTimes[38] = localStorage.getItem('start039');
+                    }
+                    if(localStorage.getItem('end039')){
+                        this.relayEndTimes[38] = localStorage.getItem('end039');
+                    }
+                    if(localStorage.getItem('res039')){
+                        this.relayResTimes[38] = localStorage.getItem('res039');
+                    }
+                    // 第40组继电器判定
+                    if(localStorage.getItem('start040')){
+                        this.relayStartTimes[39] = localStorage.getItem('start040');
+                    }
+                    if(localStorage.getItem('end040')){
+                        this.relayEndTimes[39] = localStorage.getItem('end040');
+                    }
+                    if(localStorage.getItem('res040')){
+                        this.relayResTimes[39] = localStorage.getItem('res040');
+                    }
+                    // 第41组继电器判定
+                    if(localStorage.getItem('start041')){
+                        this.relayStartTimes[40] = localStorage.getItem('start041');
+                    }
+                    if(localStorage.getItem('end041')){
+                        this.relayEndTimes[40] = localStorage.getItem('end041');
+                    }
+                    if(localStorage.getItem('res041')){
+                        this.relayResTimes[40] = localStorage.getItem('res041');
+                    }
+                    // 第42组继电器判定
+                    if(localStorage.getItem('start042')){
+                        this.relayStartTimes[41] = localStorage.getItem('start042');
+                    }
+                    if(localStorage.getItem('end042')){
+                        this.relayEndTimes[41] = localStorage.getItem('end042');
+                    }
+                    if(localStorage.getItem('res042')){
+                        this.relayResTimes[41] = localStorage.getItem('res042');
+                    }
+                    // 第43组继电器判定
+                    if(localStorage.getItem('start043')){
+                        this.relayStartTimes[42] = localStorage.getItem('start043');
+                    }
+                    if(localStorage.getItem('end043')){
+                        this.relayEndTimes[42] = localStorage.getItem('end043');
+                    }
+                    if(localStorage.getItem('res043')){
+                        this.relayResTimes[42] = localStorage.getItem('res043');
+                    }
+                     // 第44组继电器判定
+                     if(localStorage.getItem('start044')){
+                        this.relayStartTimes[43] = localStorage.getItem('start044');
+                    }
+                    if(localStorage.getItem('end044')){
+                        this.relayEndTimes[43] = localStorage.getItem('end044');
+                    }
+                    if(localStorage.getItem('res044')){
+                        this.relayResTimes[43] = localStorage.getItem('res044');
+                    }
+                    // 第45组继电器判定
+                    if(localStorage.getItem('start045')){
+                        this.relayStartTimes[44] = localStorage.getItem('start045');
+                    }
+                    if(localStorage.getItem('end045')){
+                        this.relayEndTimes[44] = localStorage.getItem('end045');
+                    }
+                    if(localStorage.getItem('res045')){
+                        this.relayResTimes[44] = localStorage.getItem('res045');
+                    }
+                    // 第46组继电器判定
+                    if(localStorage.getItem('start046')){
+                        this.relayStartTimes[45] = localStorage.getItem('start046');
+                    }
+                    if(localStorage.getItem('end046')){
+                        this.relayEndTimes[45] = localStorage.getItem('end046');
+                    }
+                    if(localStorage.getItem('res046')){
+                        this.relayResTimes[45] = localStorage.getItem('res046');
+                    }
+                    // 第47组继电器判定
+                    if(localStorage.getItem('start047')){
+                        this.relayStartTimes[46] = localStorage.getItem('start047');
+                    }
+                    if(localStorage.getItem('end047')){
+                        this.relayEndTimes[46] = localStorage.getItem('end047');
+                    }
+                    if(localStorage.getItem('res047')){
+                        this.relayResTimes[46] = localStorage.getItem('res047');
+                    }
+                    // 第48组继电器判定
+                    if(localStorage.getItem('start048')){
+                        this.relayStartTimes[47] = localStorage.getItem('start048');
+                    }
+                    if(localStorage.getItem('end048')){
+                        this.relayEndTimes[47] = localStorage.getItem('end048');
+                    }
+                    if(localStorage.getItem('res048')){
+                        this.relayResTimes[47] = localStorage.getItem('res048');
+                    }
+                    // 第49组继电器判定
+                    if(localStorage.getItem('start049')){
+                        this.relayStartTimes[48] = localStorage.getItem('start049');
+                    }
+                    if(localStorage.getItem('end049')){
+                        this.relayEndTimes[48] = localStorage.getItem('end049');
+                    }
+                    if(localStorage.getItem('res049')){
+                        this.relayResTimes[48] = localStorage.getItem('res049');
+                    }
+                    // 第50组继电器判定
+                    if(localStorage.getItem('start050')){
+                        this.relayStartTimes[49] = localStorage.getItem('start050');
+                    }
+                    if(localStorage.getItem('end050')){
+                        this.relayEndTimes[49] = localStorage.getItem('end050');
+                    }
+                    if(localStorage.getItem('res050')){
+                        this.relayResTimes[49] = localStorage.getItem('res050');
+                    }
+                    // 第51组继电器判定
+                    if(localStorage.getItem('start051')){
+                        this.relayStartTimes[50] = localStorage.getItem('start051');
+                    }
+                    if(localStorage.getItem('end051')){
+                        this.relayEndTimes[50] = localStorage.getItem('end051');
+                    }
+                    if(localStorage.getItem('res051')){
+                        this.relayResTimes[50] = localStorage.getItem('res051');
+                    }
+                    // 第52组继电器判定
+                    if(localStorage.getItem('start052')){
+                        this.relayStartTimes[51] = localStorage.getItem('start052');
+                    }
+                    if(localStorage.getItem('end052')){
+                        this.relayEndTimes[51] = localStorage.getItem('end052');
+                    }
+                    if(localStorage.getItem('res052')){
+                        this.relayResTimes[51] = localStorage.getItem('res052');
+                    }
+                    // 第53组继电器判定
+                    if(localStorage.getItem('start053')){
+                        this.relayStartTimes[52] = localStorage.getItem('start053');
+                    }
+                    if(localStorage.getItem('end053')){
+                        this.relayEndTimes[52] = localStorage.getItem('end053');
+                    }
+                    if(localStorage.getItem('res053')){
+                        this.relayResTimes[52] = localStorage.getItem('res053');
+                    }
+                    // 第54组继电器判定
+                    if(localStorage.getItem('start054')){
+                        this.relayStartTimes[53] = localStorage.getItem('start054');
+                    }
+                    if(localStorage.getItem('end054')){
+                        this.relayEndTimes[53] = localStorage.getItem('end054');
+                    }
+                    if(localStorage.getItem('res054')){
+                        this.relayResTimes[53] = localStorage.getItem('res054');
+                    }
+                    // 第55组继电器判定
+                    if(localStorage.getItem('start055')){
+                        this.relayStartTimes[54] = localStorage.getItem('start055');
+                    }
+                    if(localStorage.getItem('end055')){
+                        this.relayEndTimes[54] = localStorage.getItem('end055');
+                    }
+                    if(localStorage.getItem('res055')){
+                        this.relayResTimes[54] = localStorage.getItem('res055');
+                    }
+                    // 第56组继电器判定
+                    if(localStorage.getItem('start056')){
+                        this.relayStartTimes[55] = localStorage.getItem('start056');
+                    }
+                    if(localStorage.getItem('end056')){
+                        this.relayEndTimes[55] = localStorage.getItem('end056');
+                    }
+                    if(localStorage.getItem('res056')){
+                        this.relayResTimes[55] = localStorage.getItem('res056');
+                    }
+                    // 第57组继电器判定
+                    if(localStorage.getItem('start057')){
+                        this.relayStartTimes[56] = localStorage.getItem('start057');
+                    }
+                    if(localStorage.getItem('end057')){
+                        this.relayEndTimes[56] = localStorage.getItem('end057');
+                    }
+                    if(localStorage.getItem('res057')){
+                        this.relayResTimes[56] = localStorage.getItem('res057');
+                    }
+                    // 第58组继电器判定
+                    if(localStorage.getItem('start058')){
+                        this.relayStartTimes[57] = localStorage.getItem('start058');
+                    }
+                    if(localStorage.getItem('end058')){
+                        this.relayEndTimes[57] = localStorage.getItem('end058');
+                    }
+                    if(localStorage.getItem('res058')){
+                        this.relayResTimes[57] = localStorage.getItem('res058');
+                    }
+                    // 第59组继电器判定
+                    if(localStorage.getItem('start059')){
+                        this.relayStartTimes[58] = localStorage.getItem('start059');
+                    }
+                    if(localStorage.getItem('end059')){
+                        this.relayEndTimes[58] = localStorage.getItem('end059');
+                    }
+                    if(localStorage.getItem('res059')){
+                        this.relayResTimes[58] = localStorage.getItem('res059');
+                    }
+                    // 第60组继电器判定
+                    if(localStorage.getItem('start060')){
+                        this.relayStartTimes[59] = localStorage.getItem('start060');
+                    }
+                    if(localStorage.getItem('end060')){
+                        this.relayEndTimes[59] = localStorage.getItem('end060');
+                    }
+                    if(localStorage.getItem('res060')){
+                        this.relayResTimes[59] = localStorage.getItem('res060');
+                    }
+                    // 第61组继电器判定
+                    if(localStorage.getItem('start061')){
+                        this.relayStartTimes[60] = localStorage.getItem('start061');
+                    }
+                    if(localStorage.getItem('end061')){
+                        this.relayEndTimes[60] = localStorage.getItem('end061');
+                    }
+                    if(localStorage.getItem('res061')){
+                        this.relayResTimes[60] = localStorage.getItem('res061');
+                    }
+                    // 第62组继电器判定
+                    if(localStorage.getItem('start062')){
+                        this.relayStartTimes[61] = localStorage.getItem('start062');
+                    }
+                    if(localStorage.getItem('end062')){
+                        this.relayEndTimes[61] = localStorage.getItem('end062');
+                    }
+                    if(localStorage.getItem('res062')){
+                        this.relayResTimes[61] = localStorage.getItem('res062');
+                    }
+                    // 第63组继电器判定
+                    if(localStorage.getItem('start063')){
+                        this.relayStartTimes[62] = localStorage.getItem('start063');
+                    }
+                    if(localStorage.getItem('end063')){
+                        this.relayEndTimes[62] = localStorage.getItem('end063');
+                    }
+                    if(localStorage.getItem('res063')){
+                        this.relayResTimes[62] = localStorage.getItem('res063');
+                    }
+                    // 第64组继电器判定
+                    if(localStorage.getItem('start064')){
+                        this.relayStartTimes[63] = localStorage.getItem('start064');
+                    }
+                    if(localStorage.getItem('end064')){
+                        this.relayEndTimes[63] = localStorage.getItem('end064');
+                    }
+                    if(localStorage.getItem('res064')){
+                        this.relayResTimes[63] = localStorage.getItem('res064');
+                    }
+                };
+            // ws服务器信息监听
+                ws.onmessage = (evt) => {
+                    console.log(evt.data);
+                // 新建正则用于验证继电器整体状态的获取
+                const regex = new RegExp("(01)(01)(08)([a-fA-F0-9]{16})([a-fA-F0-9]{4})","gmi");
+                // 判定下报文
+                if(regex.test(evt.data)){
+
+                    let hexStr = evt.data.split(regex).filter(item=>item!='')[3];
+                    let hexArr = this.splitByLength(hexStr,2);
+
+                    for(let i=0;i<hexArr.length;i++){
+                        this.relayStatus.push(this.hexToBin(hexArr[i],8));
+                    }
+                    this.relayStatus = this.splitByLength(this.relayStatus.join(''),1);
+                }
+                // 第一路继电器开关判定
+                if(evt.data=='01050000ff008c3a'){
+                    this.relayStatus[0] = '1'
+                    localStorage.setItem('start001', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[0] = localStorage.getItem('start001');
+                }
+                if(evt.data=='010500000000cdca'){
+                    if(this.relayStatus[0] == '1'){
+                        this.relayStatus[0] = '0';
+                    localStorage.setItem('end001', `${new Date().toLocaleString()}`);
+                    this.relayEndTimes[0] = localStorage.getItem('end001');
+                    this.relayResTimes[0] = this.getTimeDifference(this.relayStartTimes[0],this.relayEndTimes[0]);
+                    localStorage.setItem('res001',this.relayResTimes[0]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                    
+                }
+                // 第二路继电器开关判定
+                if(evt.data=='01050001ff00ddfa'){
+                    this.relayStatus[1] = '1';
+                    localStorage.setItem('start002', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[1] = localStorage.getItem('start002');
+                }
+                if(evt.data=='0105000100009c0a'){
+                    if(this.relayStatus[1] == '1'){
+                        this.relayStatus[1] = '0';
+                    localStorage.setItem('end002', `${new Date().toLocaleString()}`);
+                    this.relayEndTimes[1] = localStorage.getItem('end002');
+                    this.relayResTimes[1] = this.getTimeDifference(this.relayStartTimes[1],this.relayEndTimes[1]);
+                    localStorage.setItem('res002',this.relayResTimes[1]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                    
+                }
+                // 第三路继电器开关判定
+                if(evt.data=='01050002ff002dfa'){
+                    this.relayStatus[2] = '1';
+                    localStorage.setItem('start003', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[2] = localStorage.getItem('start003');
+                }
+                if(evt.data=='0105000200006c0a'){
+                    if(this.relayStatus[2] == '1'){
+                        this.relayStatus[2] = '0';
+                        localStorage.setItem('end003', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[2] = localStorage.getItem('end003');
+                        
+                        this.relayResTimes[2] = this.getTimeDifference(this.relayStartTimes[2],this.relayEndTimes[2]);
+                        localStorage.setItem('res003',this.relayResTimes[2]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                    
+                }
+
+                // 第4路继电器开关判定
+                if(evt.data=='01050003ff007c3a'){
+                    this.relayStatus[3] = '1';
+                    localStorage.setItem('start004', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[3] = localStorage.getItem('start004');
+                }
+                if(evt.data=='0105000300003dca'){
+                    if(this.relayStatus[3] == '1'){
+                        this.relayStatus[3] = '0';
+                        localStorage.setItem('end004', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[3] = localStorage.getItem('end004');
+                        
+                        this.relayResTimes[3] = this.getTimeDifference(this.relayStartTimes[3],this.relayEndTimes[3]);
+                        localStorage.setItem('res004',this.relayResTimes[3]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                    
+                }
+
+                // 第5路继电器开关判定
+                if(evt.data=='01050004ff00cdfb'){
+                    this.relayStatus[4] = '1';
+                    localStorage.setItem('start005', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[4] = localStorage.getItem('start005');
+                }
+                if(evt.data=='0105000400008c0b'){
+                    if(this.relayStatus[4] == '1'){
+                        this.relayStatus[4] = '0';
+                        localStorage.setItem('end005', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[4] = localStorage.getItem('end005');
+                        
+                        this.relayResTimes[4] = this.getTimeDifference(this.relayStartTimes[4],this.relayEndTimes[4]);
+                        localStorage.setItem('res005',this.relayResTimes[4]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+
+                // 第6路继电器开关判定
+                if(evt.data=='01050005ff009c3b'){
+                    this.relayStatus[5] = '1';
+                    localStorage.setItem('start006', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[5] = localStorage.getItem('start006');
+                }
+                if(evt.data=='010500050000ddcb'){
+                    if(this.relayStatus[5] == '1'){
+                        this.relayStatus[5] = '0';
+                        localStorage.setItem('end006', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[5] = localStorage.getItem('end006');
+                        
+                        this.relayResTimes[5] = this.getTimeDifference(this.relayStartTimes[5],this.relayEndTimes[5]);
+                        localStorage.setItem('res006',this.relayResTimes[5]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+
+                // 第7路继电器开关判定
+                if(evt.data=='01050006ff006c3b'){
+                    this.relayStatus[6] = '1';
+                    localStorage.setItem('start007', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[6] = localStorage.getItem('start007');
+                }
+                if(evt.data=='0105000600002dcb'){
+                    if(this.relayStatus[6] == '1'){
+                        this.relayStatus[6] = '0';
+                        localStorage.setItem('end007', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[6] = localStorage.getItem('end007');
+                        
+                        this.relayResTimes[6] = this.getTimeDifference(this.relayStartTimes[6],this.relayEndTimes[6]);
+                        localStorage.setItem('res007',this.relayResTimes[6]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第8路继电器开关判定
+                if(evt.data=='01050007ff003dfb'){
+                    this.relayStatus[7] = '1';
+                    localStorage.setItem('start008', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[7] = localStorage.getItem('start008');
+                }
+                if(evt.data=='0105000700007c0b'){
+                    if(this.relayStatus[7] == '1'){
+                        this.relayStatus[7] = '0';
+                        localStorage.setItem('end008', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[7] = localStorage.getItem('end008');
+                        
+                        this.relayResTimes[7] = this.getTimeDifference(this.relayStartTimes[7],this.relayEndTimes[7]);
+                        localStorage.setItem('res008',this.relayResTimes[7]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第9路继电器开关判定
+                if(evt.data=='01050008ff000df8'){
+                    this.relayStatus[8] = '1';
+                    localStorage.setItem('start009', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[8] = localStorage.getItem('start009');
+                }
+                if(evt.data=='0105000800004c08'){
+                    if(this.relayStatus[8] == '1'){
+                        this.relayStatus[8] = '0';
+                        localStorage.setItem('end009', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[8] = localStorage.getItem('end009');
+                        
+                        this.relayResTimes[8] = this.getTimeDifference(this.relayStartTimes[8],this.relayEndTimes[8]);
+                        localStorage.setItem('res009',this.relayResTimes[8]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第10路继电器开关判定
+                if(evt.data=='01050009ff005c38'){
+                    this.relayStatus[9] = '1';
+                    localStorage.setItem('start010', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[9] = localStorage.getItem('start010');
+                }
+                if(evt.data=='0105000900001dc8'){
+                    if(this.relayStatus[9] == '1'){
+                        this.relayStatus[9] = '0';
+                        localStorage.setItem('end010', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[9] = localStorage.getItem('end010');
+                        
+                        this.relayResTimes[9] = this.getTimeDifference(this.relayStartTimes[9],this.relayEndTimes[9]);
+                        localStorage.setItem('res010',this.relayResTimes[9]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第11路继电器开关判定
+                if(evt.data=='0105000aff00ac38'){
+                    this.relayStatus[10] = '1';
+                    localStorage.setItem('start011', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[10] = localStorage.getItem('start011');
+                }
+                if(evt.data=='0105000a0000edc8'){
+                    if(this.relayStatus[10] == '1'){
+                        this.relayStatus[10] = '0';
+                        localStorage.setItem('end011', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[10] = localStorage.getItem('end011');
+                        
+                        this.relayResTimes[10] = this.getTimeDifference(this.relayStartTimes[10],this.relayEndTimes[10]);
+                        localStorage.setItem('res011',this.relayResTimes[10]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第12路继电器开关判定
+                if(evt.data=='0105000bff00fdf8'){
+                    this.relayStatus[11] = '1';
+                    localStorage.setItem('start012', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[11] = localStorage.getItem('start012');
+                }
+                if(evt.data=='0105000b0000bc08'){
+                    if(this.relayStatus[11] == '1'){
+                        this.relayStatus[11] = '0';
+                        localStorage.setItem('end012', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[11] = localStorage.getItem('end012');
+                        
+                        this.relayResTimes[11] = this.getTimeDifference(this.relayStartTimes[11],this.relayEndTimes[11]);
+                        localStorage.setItem('res012',this.relayResTimes[11]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第13路继电器开关判定
+                if(evt.data=='0105000cff004c39'){
+                    this.relayStatus[12] = '1';
+                    localStorage.setItem('start013', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[12] = localStorage.getItem('start013');
+                }
+                if(evt.data=='0105000c00000dc9'){
+                    if(this.relayStatus[12] == '1'){
+                        this.relayStatus[12] = '0';
+                        localStorage.setItem('end013', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[12] = localStorage.getItem('end013');
+                        
+                        this.relayResTimes[12] = this.getTimeDifference(this.relayStartTimes[12],this.relayEndTimes[12]);
+                        localStorage.setItem('res013',this.relayResTimes[12]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第14路继电器开关判定
+                if(evt.data=='0105000dff001df9'){
+                    this.relayStatus[13] = '1';
+                    localStorage.setItem('start014', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[13] = localStorage.getItem('start014');
+                }
+                if(evt.data=='0105000d00005c09'){
+                    if(this.relayStatus[13] == '1'){
+                        this.relayStatus[13] = '0';
+                        localStorage.setItem('end014', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[13] = localStorage.getItem('end014');
+                        
+                        this.relayResTimes[13] = this.getTimeDifference(this.relayStartTimes[13],this.relayEndTimes[13]);
+                        localStorage.setItem('res014',this.relayResTimes[13]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第15路继电器开关判定
+                if(evt.data=='0105000eff00edf9'){
+                    this.relayStatus[14] = '1';
+                    localStorage.setItem('start015', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[14] = localStorage.getItem('start015');
+                }
+                if(evt.data=='0105000e0000ac09'){
+                    if(this.relayStatus[14] == '1'){
+                        this.relayStatus[14] = '0';
+                        localStorage.setItem('end015', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[14] = localStorage.getItem('end015');
+                        
+                        this.relayResTimes[14] = this.getTimeDifference(this.relayStartTimes[14],this.relayEndTimes[14]);
+                        localStorage.setItem('res015',this.relayResTimes[14]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第16路继电器开关判定
+                if(evt.data=='0105000fff00bc39'){
+                    this.relayStatus[15] = '1';
+                    localStorage.setItem('start016', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[15] = localStorage.getItem('start016');
+                }
+                if(evt.data=='0105000f0000fdc9'){
+                    if(this.relayStatus[15] == '1'){
+                        this.relayStatus[15] = '0';
+                        localStorage.setItem('end016', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[15] = localStorage.getItem('end016');
+                        
+                        this.relayResTimes[15] = this.getTimeDifference(this.relayStartTimes[15],this.relayEndTimes[15]);
+                        localStorage.setItem('res016',this.relayResTimes[15]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第17路继电器开关判定
+                if(evt.data=='01050010ff008dff'){
+                    this.relayStatus[16] = '1';
+                    localStorage.setItem('start017', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[16] = localStorage.getItem('start017');
+                }
+                if(evt.data=='010500100000cc0f'){
+                    if(this.relayStatus[16] == '1'){
+                        this.relayStatus[16] = '0';
+                        localStorage.setItem('end017', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[16] = localStorage.getItem('end017');
+                        
+                        this.relayResTimes[16] = this.getTimeDifference(this.relayStartTimes[16],this.relayEndTimes[16]);
+                        localStorage.setItem('res017',this.relayResTimes[16]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第18路继电器开关判定
+                if(evt.data=='01050011ff00dc3f'){
+                    this.relayStatus[17] = '1';
+                    localStorage.setItem('start018', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[17] = localStorage.getItem('start018');
+                }
+                if(evt.data=='0105001100009dcf'){
+                    if(this.relayStatus[17] == '1'){
+                        this.relayStatus[17] = '0';
+                        localStorage.setItem('end018', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[17] = localStorage.getItem('end018');
+                        
+                        this.relayResTimes[17] = this.getTimeDifference(this.relayStartTimes[17],this.relayEndTimes[17]);
+                        localStorage.setItem('res018',this.relayResTimes[17]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第19路继电器开关判定
+                if(evt.data=='01050012ff002c3f'){
+                    this.relayStatus[18] = '1';
+                    localStorage.setItem('start019', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[18] = localStorage.getItem('start019');
+                }
+                if(evt.data=='0105001200006dcf'){
+                    if(this.relayStatus[18] == '1'){
+                        this.relayStatus[18] = '0';
+                        localStorage.setItem('end019', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[18] = localStorage.getItem('end019');
+                        
+                        this.relayResTimes[18] = this.getTimeDifference(this.relayStartTimes[18],this.relayEndTimes[18]);
+                        localStorage.setItem('res019',this.relayResTimes[18]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第20路继电器开关判定
+                if(evt.data=='01050013ff007dff'){
+                    this.relayStatus[19] = '1';
+                    localStorage.setItem('start020', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[19] = localStorage.getItem('start020');
+                }
+                if(evt.data=='0105001300003c0f'){
+                    if(this.relayStatus[19] == '1'){
+                        this.relayStatus[19] = '0';
+                        localStorage.setItem('end020', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[19] = localStorage.getItem('end020');
+                        
+                        this.relayResTimes[19] = this.getTimeDifference(this.relayStartTimes[19],this.relayEndTimes[19]);
+                        localStorage.setItem('res020',this.relayResTimes[19]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第21路继电器开关判定
+                if(evt.data=='01050014ff00cc3e'){
+                    this.relayStatus[20] = '1';
+                    localStorage.setItem('start021', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[20] = localStorage.getItem('start021');
+                }
+                if(evt.data=='0105001400008dce'){
+                    if(this.relayStatus[20] == '1'){
+                        this.relayStatus[20] = '0';
+                        localStorage.setItem('end021', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[20] = localStorage.getItem('end021');
+                        
+                        this.relayResTimes[20] = this.getTimeDifference(this.relayStartTimes[20],this.relayEndTimes[20]);
+                        localStorage.setItem('res021',this.relayResTimes[20]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                 // 第22路继电器开关判定
+                if(evt.data=='01050015ff009dfe'){
+                    this.relayStatus[21] = '1';
+                    localStorage.setItem('start022', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[21] = localStorage.getItem('start022');
+                }
+                if(evt.data=='010500150000dc0e'){
+                    if(this.relayStatus[21] == '1'){
+                        this.relayStatus[21] = '0';
+                        localStorage.setItem('end022', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[21] = localStorage.getItem('end022');
+                        
+                        this.relayResTimes[21] = this.getTimeDifference(this.relayStartTimes[21],this.relayEndTimes[21]);
+                        localStorage.setItem('res022',this.relayResTimes[21]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第23路继电器开关判定
+                if(evt.data=='01050016ff006dfe'){
+                    this.relayStatus[22] = '1';
+                    localStorage.setItem('start023', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[22] = localStorage.getItem('start023');
+                }
+                if(evt.data=='0105001600002c0e'){
+                    if(this.relayStatus[22] == '1'){
+                        this.relayStatus[22] = '0';
+                        localStorage.setItem('end023', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[22] = localStorage.getItem('end023');
+                        
+                        this.relayResTimes[22] = this.getTimeDifference(this.relayStartTimes[22],this.relayEndTimes[22]);
+                        localStorage.setItem('res023',this.relayResTimes[22]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                 // 第24路继电器开关判定
+                if(evt.data=='01050017ff003c3e'){
+                    this.relayStatus[23] = '1';
+                    localStorage.setItem('start024', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[23] = localStorage.getItem('start024');
+                }
+                if(evt.data=='0105001700007dce'){
+                    if(this.relayStatus[23] == '1'){
+                        this.relayStatus[23] = '0';
+                        localStorage.setItem('end024', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[23] = localStorage.getItem('end024');
+                        
+                        this.relayResTimes[23] = this.getTimeDifference(this.relayStartTimes[23],this.relayEndTimes[23]);
+                        localStorage.setItem('res024',this.relayResTimes[23]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                 // 第25路继电器开关判定
+                 if(evt.data=='01050018ff000c3d'){
+                    this.relayStatus[24] = '1';
+                    localStorage.setItem('start025', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[24] = localStorage.getItem('start025');
+                }
+                if(evt.data=='0105001800004dcd'){
+                    if(this.relayStatus[24] == '1'){
+                        this.relayStatus[24] = '0';
+                        localStorage.setItem('end025', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[24] = localStorage.getItem('end025');
+                        
+                        this.relayResTimes[24] = this.getTimeDifference(this.relayStartTimes[24],this.relayEndTimes[24]);
+                        localStorage.setItem('res025',this.relayResTimes[24]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+
+                // 第26路继电器开关判定
+                if(evt.data=='01050019ff005dfd'){
+                    this.relayStatus[25] = '1';
+                    localStorage.setItem('start026', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[25] = localStorage.getItem('start026');
+                }
+                if(evt.data=='0105001900001c0d'){
+                    if(this.relayStatus[25] == '1'){
+                        this.relayStatus[25] = '0';
+                        localStorage.setItem('end026', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[25] = localStorage.getItem('end026');
+                        
+                        this.relayResTimes[25] = this.getTimeDifference(this.relayStartTimes[25],this.relayEndTimes[25]);
+                        localStorage.setItem('res026',this.relayResTimes[25]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第27路继电器开关判定
+                if(evt.data=='0105001aff00adfd'){
+                    this.relayStatus[26] = '1';
+                    localStorage.setItem('start027', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[26] = localStorage.getItem('start027');
+                }
+                if(evt.data=='0105001a0000ec0d'){
+                    if(this.relayStatus[26] == '1'){
+                        this.relayStatus[26] = '0';
+                        localStorage.setItem('end027', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[26] = localStorage.getItem('end027');
+                        
+                        this.relayResTimes[26] = this.getTimeDifference(this.relayStartTimes[26],this.relayEndTimes[26]);
+                        localStorage.setItem('res027',this.relayResTimes[26]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第28路继电器开关判定
+                if(evt.data=='0105001bff00fc3d'){
+                    this.relayStatus[27] = '1';
+                    localStorage.setItem('start028', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[27] = localStorage.getItem('start028');
+                }
+                if(evt.data=='0105001b0000bdcd'){
+                    if(this.relayStatus[27] == '1'){
+                        this.relayStatus[27] = '0';
+                        localStorage.setItem('end028', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[27] = localStorage.getItem('end028');
+                        
+                        this.relayResTimes[27] = this.getTimeDifference(this.relayStartTimes[27],this.relayEndTimes[27]);
+                        localStorage.setItem('res028',this.relayResTimes[27]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第29路继电器开关判定
+                if(evt.data=='0105001cff004dfc'){
+                    this.relayStatus[28] = '1';
+                    localStorage.setItem('start029', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[28] = localStorage.getItem('start029');
+                }
+                if(evt.data=='0105001c00000c0c'){
+                    if(this.relayStatus[28] == '1'){
+                        this.relayStatus[28] = '0';
+                        localStorage.setItem('end029', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[28] = localStorage.getItem('end029');
+                        
+                        this.relayResTimes[28] = this.getTimeDifference(this.relayStartTimes[28],this.relayEndTimes[28]);
+                        localStorage.setItem('res029',this.relayResTimes[28]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第30路继电器开关判定
+                if(evt.data=='0105001dff001c3c'){
+                    this.relayStatus[29] = '1';
+                    localStorage.setItem('start030', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[29] = localStorage.getItem('start030');
+                }
+                if(evt.data=='0105001d00005dcc'){
+                    if(this.relayStatus[29] == '1'){
+                        this.relayStatus[29] = '0';
+                        localStorage.setItem('end030', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[29] = localStorage.getItem('end030');
+                        
+                        this.relayResTimes[29] = this.getTimeDifference(this.relayStartTimes[29],this.relayEndTimes[29]);
+                        localStorage.setItem('res030',this.relayResTimes[29]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                 // 第31路继电器开关判定
+                 if(evt.data=='0105001eff00ec3c'){
+                    this.relayStatus[30] = '1';
+                    localStorage.setItem('start031', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[30] = localStorage.getItem('start031');
+                }
+                if(evt.data=='0105001e0000adcc'){
+                    if(this.relayStatus[30] == '1'){
+                        this.relayStatus[30] = '0';
+                        localStorage.setItem('end031', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[30] = localStorage.getItem('end031');
+                        
+                        this.relayResTimes[30] = this.getTimeDifference(this.relayStartTimes[30],this.relayEndTimes[30]);
+                        localStorage.setItem('res031',this.relayResTimes[30]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第32路继电器开关判定
+                if(evt.data=='0105001fff00bdfc'){
+                    this.relayStatus[31] = '1';
+                    localStorage.setItem('start032', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[31] = localStorage.getItem('start032');
+                }
+                if(evt.data=='0105001f0000fc0c'){
+                    if(this.relayStatus[31] == '1'){
+                        this.relayStatus[31] = '0';
+                        localStorage.setItem('end032', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[31] = localStorage.getItem('end032');
+                        
+                        this.relayResTimes[31] = this.getTimeDifference(this.relayStartTimes[31],this.relayEndTimes[31]);
+                        localStorage.setItem('res032',this.relayResTimes[31]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第33路继电器开关判定
+                if(evt.data=='01050020ff008df0'){
+                    this.relayStatus[32] = '1';
+                    localStorage.setItem('start033', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[32] = localStorage.getItem('start033');
+                }
+                if(evt.data=='010500200000cc00'){
+                    if(this.relayStatus[32] == '1'){
+                        this.relayStatus[32] = '0';
+                        localStorage.setItem('end033', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[32] = localStorage.getItem('end033');
+                        
+                        this.relayResTimes[32] = this.getTimeDifference(this.relayStartTimes[32],this.relayEndTimes[32]);
+                        localStorage.setItem('res033',this.relayResTimes[32]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第34路继电器开关判定
+                if(evt.data=='01050021ff00dc30'){
+                    this.relayStatus[33] = '1';
+                    localStorage.setItem('start034', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[33] = localStorage.getItem('start034');
+                }
+                if(evt.data=='0105002100009dc0'){
+                    if(this.relayStatus[33] == '1'){
+                        this.relayStatus[33] = '0';
+                        localStorage.setItem('end034', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[33] = localStorage.getItem('end034');
+                        
+                        this.relayResTimes[33] = this.getTimeDifference(this.relayStartTimes[33],this.relayEndTimes[33]);
+                        localStorage.setItem('res034',this.relayResTimes[33]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第35路继电器开关判定
+                if(evt.data=='01050022ff002c30'){
+                    this.relayStatus[34] = '1';
+                    localStorage.setItem('start035', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[34] = localStorage.getItem('start035');
+                }
+                if(evt.data=='0105002200006dc0'){
+                    if(this.relayStatus[34] == '1'){
+                        this.relayStatus[34] = '0';
+                        localStorage.setItem('end035', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[34] = localStorage.getItem('end035');
+                        
+                        this.relayResTimes[34] = this.getTimeDifference(this.relayStartTimes[34],this.relayEndTimes[34]);
+                        localStorage.setItem('res035',this.relayResTimes[34]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第36路继电器开关判定
+                if(evt.data=='01050023ff007df0'){
+                    this.relayStatus[35] = '1';
+                    localStorage.setItem('start036', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[35] = localStorage.getItem('start036');
+                }
+                if(evt.data=='0105002300003c00'){
+                    if(this.relayStatus[35] == '1'){
+                        this.relayStatus[35] = '0';
+                        localStorage.setItem('end036', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[35] = localStorage.getItem('end036');
+                        
+                        this.relayResTimes[35] = this.getTimeDifference(this.relayStartTimes[35],this.relayEndTimes[35]);
+                        localStorage.setItem('res036',this.relayResTimes[35]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第37路继电器开关判定
+                if(evt.data=='01050024ff00cc31'){
+                    this.relayStatus[36] = '1';
+                    localStorage.setItem('start037', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[36] = localStorage.getItem('start037');
+                }
+                if(evt.data=='0105002400008dc1'){
+                    if(this.relayStatus[36] == '1'){
+                        this.relayStatus[36] = '0';
+                        localStorage.setItem('end037', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[36] = localStorage.getItem('end037');
+                        
+                        this.relayResTimes[36] = this.getTimeDifference(this.relayStartTimes[36],this.relayEndTimes[36]);
+                        localStorage.setItem('res037',this.relayResTimes[36]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第38路继电器开关判定
+                if(evt.data=='01050025ff009df1'){
+                    this.relayStatus[37] = '1';
+                    localStorage.setItem('start038', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[37] = localStorage.getItem('start038');
+                }
+                if(evt.data=='010500250000dc01'){
+                    if(this.relayStatus[37] == '1'){
+                        this.relayStatus[37] = '0';
+                        localStorage.setItem('end038', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[37] = localStorage.getItem('end038');
+                        
+                        this.relayResTimes[37] = this.getTimeDifference(this.relayStartTimes[37],this.relayEndTimes[37]);
+                        localStorage.setItem('res038',this.relayResTimes[37]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第39路继电器开关判定
+                if(evt.data=='01050026ff006df1'){
+                    this.relayStatus[38] = '1';
+                    localStorage.setItem('start039', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[38] = localStorage.getItem('start039');
+                }
+                if(evt.data=='0105002600002c01'){
+                    if(this.relayStatus[38] == '1'){
+                        this.relayStatus[38] = '0';
+                        localStorage.setItem('end039', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[38] = localStorage.getItem('end039');
+                        
+                        this.relayResTimes[38] = this.getTimeDifference(this.relayStartTimes[38],this.relayEndTimes[38]);
+                        localStorage.setItem('res039',this.relayResTimes[38]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第40路继电器开关判定
+                if(evt.data=='01050027ff003c31'){
+                    this.relayStatus[39] = '1';
+                    localStorage.setItem('start040', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[39] = localStorage.getItem('start040');
+                }
+                if(evt.data=='0105002700007dc1'){
+                    if(this.relayStatus[39] == '1'){
+                        this.relayStatus[39] = '0';
+                        localStorage.setItem('end040', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[39] = localStorage.getItem('end040');
+                        
+                        this.relayResTimes[39] = this.getTimeDifference(this.relayStartTimes[39],this.relayEndTimes[39]);
+                        localStorage.setItem('res040',this.relayResTimes[39]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第41路继电器开关判定
+                if(evt.data=='01050028ff000c32'){
+                    this.relayStatus[40] = '1';
+                    localStorage.setItem('start041', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[40] = localStorage.getItem('start041');
+                }
+                if(evt.data=='0105002800004dc2'){
+                    if(this.relayStatus[40] == '1'){
+                        this.relayStatus[40] = '0';
+                        localStorage.setItem('end041', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[40] = localStorage.getItem('end041');
+                        
+                        this.relayResTimes[40] = this.getTimeDifference(this.relayStartTimes[40],this.relayEndTimes[40]);
+                        localStorage.setItem('res041',this.relayResTimes[40]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第42路继电器开关判定
+                if(evt.data=='01050029ff005df2'){
+                    this.relayStatus[41] = '1';
+                    localStorage.setItem('start042', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[41] = localStorage.getItem('start042');
+                }
+                if(evt.data=='0105002900001c02'){
+                    if(this.relayStatus[41] == '1'){
+                        this.relayStatus[41] = '0';
+                        localStorage.setItem('end042', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[41] = localStorage.getItem('end042');
+                        
+                        this.relayResTimes[41] = this.getTimeDifference(this.relayStartTimes[41],this.relayEndTimes[41]);
+                        localStorage.setItem('res042',this.relayResTimes[41]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第43路继电器开关判定
+                if(evt.data=='0105002aff00adf2'){
+                    this.relayStatus[42] = '1';
+                    localStorage.setItem('start043', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[42] = localStorage.getItem('start043');
+                }
+                if(evt.data=='0105002a0000ec02'){
+                    if(this.relayStatus[42] == '1'){
+                        this.relayStatus[42] = '0';
+                        localStorage.setItem('end043', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[42] = localStorage.getItem('end043');
+                        
+                        this.relayResTimes[42] = this.getTimeDifference(this.relayStartTimes[42],this.relayEndTimes[42]);
+                        localStorage.setItem('res043',this.relayResTimes[42]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                 // 第44路继电器开关判定
+                 if(evt.data=='0105002bff00fc32'){
+                    this.relayStatus[43] = '1';
+                    localStorage.setItem('start044', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[43] = localStorage.getItem('start044');
+                }
+                if(evt.data=='0105002b0000bdc2'){
+                    if(this.relayStatus[43] == '1'){
+                        this.relayStatus[43] = '0';
+                        localStorage.setItem('end044', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[43] = localStorage.getItem('end044');
+                        
+                        this.relayResTimes[43] = this.getTimeDifference(this.relayStartTimes[43],this.relayEndTimes[43]);
+                        localStorage.setItem('res044',this.relayResTimes[43]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第45路继电器开关判定
+                if(evt.data=='0105002cff004df3'){
+                    this.relayStatus[44] = '1';
+                    localStorage.setItem('start045', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[44] = localStorage.getItem('start045');
+                }
+                if(evt.data=='0105002c00000c03'){
+                    if(this.relayStatus[44] == '1'){
+                        this.relayStatus[44] = '0';
+                        localStorage.setItem('end045', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[44] = localStorage.getItem('end045');
+                        
+                        this.relayResTimes[44] = this.getTimeDifference(this.relayStartTimes[44],this.relayEndTimes[44]);
+                        localStorage.setItem('res045',this.relayResTimes[44]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                 // 第46路继电器开关判定
+                 if(evt.data=='0105002dff001c33'){
+                    this.relayStatus[45] = '1';
+                    localStorage.setItem('start046', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[45] = localStorage.getItem('start046');
+                }
+                if(evt.data=='0105002d00005dc3'){
+                    if(this.relayStatus[45] == '1'){
+                        this.relayStatus[45] = '0';
+                        localStorage.setItem('end046', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[45] = localStorage.getItem('end046');
+                        
+                        this.relayResTimes[45] = this.getTimeDifference(this.relayStartTimes[45],this.relayEndTimes[45]);
+                        localStorage.setItem('res046',this.relayResTimes[45]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                 // 第47路继电器开关判定
+                 if(evt.data=='0105002eff00ec33'){
+                    this.relayStatus[46] = '1';
+                    localStorage.setItem('start047', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[46] = localStorage.getItem('start047');
+                }
+                if(evt.data=='0105002e0000adc3'){
+                    if(this.relayStatus[46] == '1'){
+                        this.relayStatus[46] = '0';
+                        localStorage.setItem('end047', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[46] = localStorage.getItem('end047');
+                        
+                        this.relayResTimes[46] = this.getTimeDifference(this.relayStartTimes[46],this.relayEndTimes[46]);
+                        localStorage.setItem('res047',this.relayResTimes[46]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第48路继电器开关判定
+                if(evt.data=='0105002fff00bdf3'){
+                    this.relayStatus[47] = '1';
+                    localStorage.setItem('start048', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[47] = localStorage.getItem('start048');
+                }
+                if(evt.data=='0105002f0000fc03'){
+                    if(this.relayStatus[47] == '1'){
+                        this.relayStatus[47] = '0';
+                        localStorage.setItem('end048', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[47] = localStorage.getItem('end048');
+                        
+                        this.relayResTimes[47] = this.getTimeDifference(this.relayStartTimes[47],this.relayEndTimes[47]);
+                        localStorage.setItem('res048',this.relayResTimes[47]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第49路继电器开关判定
+                if(evt.data=='01050030ff008c35'){
+                    this.relayStatus[48] = '1';
+                    localStorage.setItem('start049', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[48] = localStorage.getItem('start049');
+                }
+                if(evt.data=='010500300000cdc5'){
+                    if(this.relayStatus[48] == '1'){
+                        this.relayStatus[48] = '0';
+                        localStorage.setItem('end049', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[48] = localStorage.getItem('end049');
+                        
+                        this.relayResTimes[48] = this.getTimeDifference(this.relayStartTimes[48],this.relayEndTimes[48]);
+                        localStorage.setItem('res049',this.relayResTimes[48]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第50路继电器开关判定
+                if(evt.data=='01050031ff00ddf5'){
+                    this.relayStatus[49] = '1';
+                    localStorage.setItem('start050', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[49] = localStorage.getItem('start050');
+                }
+                if(evt.data=='0105003100009c05'){
+                    if(this.relayStatus[49] == '1'){
+                        this.relayStatus[49] = '0';
+                        localStorage.setItem('end050', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[49] = localStorage.getItem('end050');
+                        
+                        this.relayResTimes[49] = this.getTimeDifference(this.relayStartTimes[49],this.relayEndTimes[49]);
+                        localStorage.setItem('res050',this.relayResTimes[49]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                 // 第51路继电器开关判定
+                 if(evt.data=='01050032ff002df5'){
+                    this.relayStatus[50] = '1';
+                    localStorage.setItem('start051', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[50] = localStorage.getItem('start051');
+                }
+                if(evt.data=='0105003200006c05'){
+                    if(this.relayStatus[50] == '1'){
+                        this.relayStatus[50] = '0';
+                        localStorage.setItem('end051', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[50] = localStorage.getItem('end051');
+                        
+                        this.relayResTimes[50] = this.getTimeDifference(this.relayStartTimes[50],this.relayEndTimes[50]);
+                        localStorage.setItem('res051',this.relayResTimes[50]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第52路继电器开关判定
+                if(evt.data=='01050033ff007c35'){
+                    this.relayStatus[51] = '1';
+                    localStorage.setItem('start052', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[51] = localStorage.getItem('start052');
+                }
+                if(evt.data=='0105003300003dc5'){
+                    if(this.relayStatus[51] == '1'){
+                        this.relayStatus[51] = '0';
+                        localStorage.setItem('end052', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[51] = localStorage.getItem('end052');
+                        
+                        this.relayResTimes[51] = this.getTimeDifference(this.relayStartTimes[51],this.relayEndTimes[51]);
+                        localStorage.setItem('res052',this.relayResTimes[51]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第53路继电器开关判定
+                if(evt.data=='01050034ff00cdf4'){
+                    this.relayStatus[52] = '1';
+                    localStorage.setItem('start053', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[52] = localStorage.getItem('start053');
+                }
+                if(evt.data=='0105003400008c04'){
+                    if(this.relayStatus[52] == '1'){
+                        this.relayStatus[52] = '0';
+                        localStorage.setItem('end053', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[52] = localStorage.getItem('end053');
+                        
+                        this.relayResTimes[52] = this.getTimeDifference(this.relayStartTimes[52],this.relayEndTimes[52]);
+                        localStorage.setItem('res053',this.relayResTimes[52]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第54路继电器开关判定
+                if(evt.data=='01050035ff009c34'){
+                    this.relayStatus[53] = '1';
+                    localStorage.setItem('start054', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[53] = localStorage.getItem('start054');
+                }
+                if(evt.data=='010500350000ddc4'){
+                    if(this.relayStatus[53] == '1'){
+                        this.relayStatus[53] = '0';
+                        localStorage.setItem('end054', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[53] = localStorage.getItem('end054');
+                        
+                        this.relayResTimes[53] = this.getTimeDifference(this.relayStartTimes[53],this.relayEndTimes[53]);
+                        localStorage.setItem('res054',this.relayResTimes[53]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第55路继电器开关判定
+                if(evt.data=='01050036ff006c34'){
+                    this.relayStatus[54] = '1';
+                    localStorage.setItem('start055', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[54] = localStorage.getItem('start055');
+                }
+                if(evt.data=='0105003600002dc4'){
+                    if(this.relayStatus[54] == '1'){
+                        this.relayStatus[54] = '0';
+                        localStorage.setItem('end055', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[54] = localStorage.getItem('end055');
+                        
+                        this.relayResTimes[54] = this.getTimeDifference(this.relayStartTimes[54],this.relayEndTimes[54]);
+                        localStorage.setItem('res055',this.relayResTimes[54]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                 // 第56路继电器开关判定
+                 if(evt.data=='01050037ff003df4'){
+                    this.relayStatus[55] = '1';
+                    localStorage.setItem('start056', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[55] = localStorage.getItem('start056');
+                }
+                if(evt.data=='0105003700007c04'){
+                    if(this.relayStatus[55] == '1'){
+                        this.relayStatus[55] = '0';
+                        localStorage.setItem('end056', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[55] = localStorage.getItem('end056');
+                        
+                        this.relayResTimes[55] = this.getTimeDifference(this.relayStartTimes[55],this.relayEndTimes[55]);
+                        localStorage.setItem('res056',this.relayResTimes[55]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第57路继电器开关判定
+                if(evt.data=='01050038ff000df7'){
+                    this.relayStatus[56] = '1';
+                    localStorage.setItem('start057', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[56] = localStorage.getItem('start057');
+                }
+                if(evt.data=='0105003800004c07'){
+                    if(this.relayStatus[56] == '1'){
+                        this.relayStatus[56] = '0';
+                        localStorage.setItem('end057', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[56] = localStorage.getItem('end057');
+                        
+                        this.relayResTimes[56] = this.getTimeDifference(this.relayStartTimes[56],this.relayEndTimes[56]);
+                        localStorage.setItem('res057',this.relayResTimes[56]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第58路继电器开关判定
+                if(evt.data=='01050039ff005c37'){
+                    this.relayStatus[57] = '1';
+                    localStorage.setItem('start058', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[57] = localStorage.getItem('start058');
+                }
+                if(evt.data=='0105003900001dc7'){
+                    if(this.relayStatus[57] == '1'){
+                        this.relayStatus[57] = '0';
+                        localStorage.setItem('end058', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[57] = localStorage.getItem('end058');
+                        
+                        this.relayResTimes[57] = this.getTimeDifference(this.relayStartTimes[57],this.relayEndTimes[57]);
+                        localStorage.setItem('res058',this.relayResTimes[57]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第59路继电器开关判定
+                if(evt.data=='0105003aff00ac37'){
+                    this.relayStatus[58] = '1';
+                    localStorage.setItem('start059', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[58] = localStorage.getItem('start059');
+                }
+                if(evt.data=='0105003a0000edc7'){
+                    if(this.relayStatus[58] == '1'){
+                        this.relayStatus[58] = '0';
+                        localStorage.setItem('end059', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[58] = localStorage.getItem('end059');
+                        
+                        this.relayResTimes[58] = this.getTimeDifference(this.relayStartTimes[58],this.relayEndTimes[58]);
+                        localStorage.setItem('res059',this.relayResTimes[58]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第60路继电器开关判定
+                if(evt.data=='0105003bff00fdf7'){
+                    this.relayStatus[59] = '1';
+                    localStorage.setItem('start060', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[59] = localStorage.getItem('start060');
+                }
+                if(evt.data=='0105003b0000bc07'){
+                    if(this.relayStatus[59] == '1'){
+                        this.relayStatus[59] = '0';
+                        localStorage.setItem('end060', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[59] = localStorage.getItem('end060');
+                        
+                        this.relayResTimes[59] = this.getTimeDifference(this.relayStartTimes[59],this.relayEndTimes[59]);
+                        localStorage.setItem('res060',this.relayResTimes[59]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第61路继电器开关判定
+                if(evt.data=='0105003cff004c36'){
+                    this.relayStatus[60] = '1';
+                    localStorage.setItem('start061', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[60] = localStorage.getItem('start061');
+                }
+                if(evt.data=='0105003c00000dc6'){
+                    if(this.relayStatus[60] == '1'){
+                        this.relayStatus[60] = '0';
+                        localStorage.setItem('end061', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[60] = localStorage.getItem('end061');
+                        
+                        this.relayResTimes[60] = this.getTimeDifference(this.relayStartTimes[60],this.relayEndTimes[60]);
+                        localStorage.setItem('res061',this.relayResTimes[60]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第62路继电器开关判定
+                if(evt.data=='0105003dff001df6'){
+                    this.relayStatus[61] = '1';
+                    localStorage.setItem('start062', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[61] = localStorage.getItem('start062');
+                }
+                if(evt.data=='0105003d00005c06'){
+                    if(this.relayStatus[61] == '1'){
+                        this.relayStatus[61] = '0';
+                        localStorage.setItem('end062', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[61] = localStorage.getItem('end062');
+                        
+                        this.relayResTimes[61] = this.getTimeDifference(this.relayStartTimes[61],this.relayEndTimes[61]);
+                        localStorage.setItem('res062',this.relayResTimes[61]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                 // 第63路继电器开关判定
+                 if(evt.data=='0105003eff00edf6'){
+                    this.relayStatus[62] = '1';
+                    localStorage.setItem('start063', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[62] = localStorage.getItem('start063');
+                }
+                if(evt.data=='0105003e0000ac06'){
+                    if(this.relayStatus[62] == '1'){
+                        this.relayStatus[62] = '0';
+                        localStorage.setItem('end063', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[62] = localStorage.getItem('end063');
+                        
+                        this.relayResTimes[62] = this.getTimeDifference(this.relayStartTimes[62],this.relayEndTimes[62]);
+                        localStorage.setItem('res063',this.relayResTimes[62]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                // 第64路继电器开关判定
+                if(evt.data=='0105003fff00bc36'){
+                    this.relayStatus[63] = '1';
+                    localStorage.setItem('start064', `${new Date().toLocaleString()}`);
+                    this.relayStartTimes[63] = localStorage.getItem('start064');
+                }
+                if(evt.data=='0105003f0000fdc6'){
+                    if(this.relayStatus[63] == '1'){
+                        this.relayStatus[63] = '0';
+                        localStorage.setItem('end064', `${new Date().toLocaleString()}`);
+                        this.relayEndTimes[63] = localStorage.getItem('end064');
+                        
+                        this.relayResTimes[63] = this.getTimeDifference(this.relayStartTimes[63],this.relayEndTimes[63]);
+                        localStorage.setItem('res064',this.relayResTimes[63]);
+                    }else{
+                        alert('继电器未激活，需要激活再点关闭来进行老化时间推算！')
+                    }
+                }
+                };
+    
+                ws.onclose = () => {
+                    this.websockMessage = "电源继电组件已断开";
+                };
+            
+                ws.onerror = (error) => {
+                    console.error('WebSocket error:', error);
+                };
+            
+                // 将WebSocket实例存储在Vue实例上，以便稍后关闭连接
+                this.webSocket = ws;
+        },
+        clickDend(val) {
+            if (this.webSocket) {
+                this.webSocket.send(val);
+            }
+        },
+        hexToBin(hexString, targetLength) {
+            // 将16进制字符串转换为数字
+            const num = parseInt(hexString, 16);
+            // 将数字转换为指定长度的2进制字符串
+            const binString = num.toString(2);
+            // 计算需要补零的位数
+            const padLength = targetLength - binString.length;
+            // 使用前导零补全到指定长度
+            return '0'.repeat(padLength > 0 ? padLength : 0) + binString;
+        },
+        splitByLength(str, len){
+            let res = [];
+            for (let i = 0; i < str.length; i += len) {
+                    res.push(str.substr(i, len));
+                }
+                return res.reverse();
+        },
+        getTimeDifference(time1, time2) {
+            var date1 = new Date(time1); // time1为字符串形式的时间
+            var date2 = new Date(time2); // time2为字符串形式的时间
+            var difference = date2.getTime() - date1.getTime(); // 计算两个时间戳的差值
+            
+            // 转换为小时、分钟和秒
+            var hours = Math.floor(difference / (1000 * 60 * 60));
+            var minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((difference % (1000 * 60)) / 1000);
+            
+            return hours + "小时 " + minutes + "分钟 " + seconds + "秒";
+        },
+        checkAll(){
+            this.selects = [];
+            for (let i = 0; i < 64; i++) {
+                this.selects.push(i+'');
+            }
+        },
+        checkNo(){
+            this.selects = [];
+        }
+    },
+    mounted(){
+        this.setupWebSocket()
+    },
+    beforeDestroy() {
+    if (this.webSocket) {
+      this.webSocket.close();
+    }
+  }
+   }).mount('#app');
+</script>
+
+</body>
+</html>
